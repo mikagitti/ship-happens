@@ -1,68 +1,46 @@
 'use client';
-import SeaButton from "./components/sea-button";
+import { CSSProperties, use, useEffect, useState } from "react";
+import { getShipOnMap } from "./helpers/coordination";
+import SeaGrid from "./components/sea-grid";
 
-const tileCount = 5;
-const squereSize = 40;
+const gridCount = 7;
+const squereSize = '210px';
+const shipLength = 3;
 
-const pageStyle = {
+const pageStyle: CSSProperties = {
   display: 'flex',
+  flexDirection: 'column',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '100vw',
-  height: '100vh'
+  height: '100vh',
 }
 
-const playgroundStyle = {
+const playgroundStyle: CSSProperties = {
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  width: '500px',
-  height: '500px',
   border: '1px solid black'
 }
 
-const buttonContainerStyle = {
-  display: 'grid',
-  gridTemplateColumns: `repeat(${tileCount}, 1fr)`,
-  gap: '10px'
-}
-
-const boatsLocation = ['A1', 'A2', 'A3'];
-
 export default function Home() {
 
+  const [shipOnMap, setShipOnMap] = useState<string[] | null>(null);
+
   const didItHit = (coord: string): boolean => {
-    if (boatsLocation.includes(coord)) {
+    if (shipOnMap && shipOnMap.includes(coord)) {
       return true;
     }
     return false;
   }
 
-
   return (
-    <div style={pageStyle}>
-      <div style={playgroundStyle}>
-        <div style={buttonContainerStyle}>
-          {[...Array(tileCount * tileCount)].map((_, index) => {
-
-            return (
-              <SeaButton key={index} squereSize={squereSize} name={createCoordinationName()} didItHit={didItHit} />
-            );
-
-            function getRowAndColumn() {
-              const row: string = String.fromCharCode(65 + Math.floor(index / tileCount));
-              const col: number = (index % tileCount) + 1;
-              return { row, col };
-            }
-
-            function createCoordinationName() {
-              const { row, col }: { row: string; col: number; } = getRowAndColumn();
-              return `${row}${col}`;
-            }
-
-          })}
-        </div>
+    <>
+      <div style={pageStyle}>
+        <button onClick={() => setShipOnMap(getShipOnMap(gridCount, shipLength))}>Start New Game!</button>
+        {shipOnMap &&
+          <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} squereSize={squereSize} didItHit={didItHit} />
+        }
       </div>
-    </div>
+    </>
   );
 }
