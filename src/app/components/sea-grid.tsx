@@ -24,11 +24,10 @@ const gridStyle = {
 
 type seaGridProps = {
     gridCount: number;
-    squereSize: string;
-    didItHit: (coord: string) => boolean;
+    isTargetHit: (coord: string) => boolean;
 }
 
-export default function SeaGrid({ gridCount, squereSize, didItHit }: seaGridProps) {
+export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
 
     const [grid, setGrid] = useState<string[][]>(
         Array.from({ length: gridCount }, () => Array(gridCount).fill('navy'))
@@ -40,7 +39,7 @@ export default function SeaGrid({ gridCount, squereSize, didItHit }: seaGridProp
 
         const cellName = createCellName(row + 1, col + 1); // +1 because the array index starts from 0.
 
-        if (didItHit(cellName) === true) {
+        if (isTargetHit(cellName) === true) {
             newGrid[row][col] = 'yellow';
         }
         else {

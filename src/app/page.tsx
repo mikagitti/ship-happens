@@ -1,11 +1,9 @@
 'use client';
-import { CSSProperties, use, useEffect, useState } from "react";
+import { CSSProperties, useState } from "react";
 import { getShipOnMap } from "./helpers/coordination";
 import SeaGrid from "./components/sea-grid";
+import SettingsBanner from "./components/settings-banner";
 
-const gridCount = 7;
-const squereSize = '210px';
-const shipLength = 3;
 
 const pageStyle: CSSProperties = {
   display: 'flex',
@@ -22,23 +20,49 @@ const playgroundStyle: CSSProperties = {
   border: '1px solid black'
 }
 
+const comboBoxValues = {
+  gridCount: [5, 7, 10] as number[],
+  shipLength: [1, 2, 3] as number[],
+}
+
 export default function Home() {
 
   const [shipOnMap, setShipOnMap] = useState<string[] | null>(null);
+  const [gridCount, setGridCount] = useState<number>(5);
+  const [shipLength, setShipLength] = useState<number>(1);
 
-  const didItHit = (coord: string): boolean => {
-    if (shipOnMap && shipOnMap.includes(coord)) {
+  const isTargetHit = (coordinationXY: string): boolean => {
+    if (shipOnMap && shipOnMap.includes(coordinationXY)) {
       return true;
     }
     return false;
   }
 
+  const handleStartNewGameButtonClick = () => {
+    const ship = getShipOnMap(gridCount, shipLength);
+    setShipOnMap(ship);
+
+    console.log(ship);
+
+  }
+
+  const handleNewGameButtonClick = () => {
+    setShipOnMap(null);
+  }
+
+
   return (
     <>
       <div style={pageStyle}>
-        <button onClick={() => setShipOnMap(getShipOnMap(gridCount, shipLength))}>Start New Game!</button>
-        {shipOnMap &&
-          <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} squereSize={squereSize} didItHit={didItHit} />
+        {shipOnMap ?
+          <>
+            <button style={{ padding: '10px', marginTop: '20px' }} onClick={handleNewGameButtonClick}>New Game</button>
+            <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} isTargetHit={isTargetHit} />
+          </> :
+          <>
+            <SettingsBanner setGridCount={setGridCount} setShipLength={setShipLength} comboBoxValues={comboBoxValues} />
+            <button style={{ padding: '10px' }} onClick={handleStartNewGameButtonClick}>LET'S PLAY!!</button>
+          </>
         }
       </div>
     </>
