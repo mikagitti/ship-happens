@@ -67,8 +67,6 @@ export function getShipOnMap(
           ...coordinates.map((coord) => createCellName(coord.x, coord.y))
      );
 
-     console.log(gridCoordinations); /* REMOVE-ME */
-
      return gridCoordinations;
 }
 
