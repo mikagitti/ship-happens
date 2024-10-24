@@ -3,33 +3,18 @@ import { CSSProperties, useState } from "react";
 import { getShipOnMap } from "./helpers/coordination";
 import SeaGrid from "./components/sea-grid";
 import SettingsBanner from "./components/settings-banner";
+import styles from './page.module.css';
+import { comboBoxValues } from "./helpers/coordination";
 
-
-const pageStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: '100vh',
-}
-
-const playgroundStyle: CSSProperties = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  border: '1px solid black'
-}
-
-const comboBoxValues = {
-  gridCount: [5, 7, 10] as number[],
-  shipLength: [1, 2, 3] as number[],
-}
 
 export default function Home() {
 
+  const defaultGridCount: number = comboBoxValues.defaultGridCount;
+  const defaultShipLength: number = comboBoxValues.defaultShipLength;
+
   const [shipOnMap, setShipOnMap] = useState<string[] | null>(null);
-  const [gridCount, setGridCount] = useState<number>(5);
-  const [shipLength, setShipLength] = useState<number>(1);
+  const [gridCount, setGridCount] = useState<number>(defaultGridCount);
+  const [shipLength, setShipLength] = useState<number>(defaultShipLength);
 
   const isTargetHit = (coordinationXY: string): boolean => {
     if (shipOnMap && shipOnMap.includes(coordinationXY)) {
@@ -41,30 +26,38 @@ export default function Home() {
   const handleStartNewGameButtonClick = () => {
     const ship = getShipOnMap(gridCount, shipLength);
     setShipOnMap(ship);
-
-    console.log(ship);
-
   }
 
   const handleNewGameButtonClick = () => {
     setShipOnMap(null);
+    setGridCount(defaultGridCount);
+    setShipLength(defaultShipLength);
   }
 
 
   return (
-    <>
-      <div style={pageStyle}>
-        {shipOnMap ?
-          <>
-            <button style={{ padding: '10px', marginTop: '20px' }} onClick={handleNewGameButtonClick}>New Game</button>
+    <div className={styles.gridcontainer}>
+      {shipOnMap ?
+        <>
+          <div className={styles.gridTop}>
+            <h1>Ship Happens</h1>
+            <button className={styles.buttonStyle} onClick={handleNewGameButtonClick}>New Game</button>
+          </div>
+
+          <div className={styles.gridBottom}>
             <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} isTargetHit={isTargetHit} />
-          </> :
-          <>
-            <SettingsBanner setGridCount={setGridCount} setShipLength={setShipLength} comboBoxValues={comboBoxValues} />
-            <button style={{ padding: '10px' }} onClick={handleStartNewGameButtonClick}>LET'S PLAY!!</button>
-          </>
-        }
-      </div>
-    </>
+          </div>
+        </> :
+        <>
+          <div className={styles.gridTop}>
+            <SettingsBanner setGridCount={setGridCount} setShipLength={setShipLength} />
+          </div>
+
+          <div className={styles.gridBottom}>
+            <button className={styles.buttonStyle} onClick={handleStartNewGameButtonClick}>PLAY!!</button>
+          </div>
+        </>
+      }
+    </div>
   );
 }

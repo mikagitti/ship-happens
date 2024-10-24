@@ -2,25 +2,36 @@
 import { useState } from 'react';
 import { createCellName } from '../helpers/coordination';
 
-const cellStyle = {
-    backgroundColor: 'navy',
-    border: '2px solid darkblue',
-    cursor: 'pointer',
-    color: 'red',
+const seaGridStyle = {
+    width: '100%',
+    height: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    fontSize: '1rem',
+    padding: '1rem',
+    border: '1px solid black',
 };
 
 const gridStyle = {
-    width: '80vw',
-    height: '80vw',
-    maxHeight: '90vh',
+    width: '100%',
+    height: '100%',
     display: 'grid',
-    margin: 'auto',
-    gap: '1px',
 };
+
+const cellStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: '1.5rem',
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'navy',
+    color: 'red',
+    border: '1px solid darkblue',
+    cursor: 'pointer',
+};
+
+
 
 type seaGridProps = {
     gridCount: number;
@@ -49,25 +60,28 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
     };
 
     return (
-        <div style={{
-            ...gridStyle,
-            gridTemplateColumns: `repeat(${gridCount}, 1fr)`,
-            gridTemplateRows: `repeat(${gridCount}, 1fr)`,
-        }}>
-            {grid.map((row, rowIndex) =>
-                row.map((color, colIndex) => (
-                    <div
-                        key={`${rowIndex}-${colIndex}`}
-                        onClick={() => checkTheHit(rowIndex, colIndex)}
-                        style={{
-                            ...cellStyle,
-                            backgroundColor: color,
-                        }}
-                    >
-                        {createCellName(rowIndex + 1, colIndex + 1)}
-                    </div>
-                ))
-            )}
+        <div style={seaGridStyle}>
+
+            <div style={{
+                ...gridStyle,
+                gridTemplateColumns: `repeat(${gridCount}, 1fr)`,
+                gridTemplateRows: `repeat(${gridCount}, 1fr)`,
+            }}>
+                {grid.map((row, rowIndex) =>
+                    row.map((color, colIndex) => (
+                        <div
+                            key={`${rowIndex}-${colIndex}`}
+                            onClick={() => checkTheHit(rowIndex, colIndex)}
+                            style={{
+                                ...cellStyle,
+                                backgroundColor: color,
+                            }}
+                        >
+                            {createCellName(rowIndex + 1, colIndex + 1)}
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
     );
 };
