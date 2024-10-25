@@ -1,44 +1,17 @@
 
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { createCellName } from '../helpers/coordination';
-
-const seaGridStyle = {
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '1rem',
-    border: '1px solid black',
-};
-
-const gridStyle = {
-    width: '100%',
-    height: '100%',
-    display: 'grid',
-};
-
-const cellStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: '1.5rem',
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'navy',
-    color: 'red',
-    border: '1px solid darkblue',
-    cursor: 'pointer',
-};
-
+import { cellStyle, gridStyle, seaGridStyle } from './sea-grid-styles';
+import './sea-grid-styles.css';
 
 
 type seaGridProps = {
     gridCount: number;
     isTargetHit: (coord: string) => boolean;
+    setTimerRunning: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
+export default function SeaGrid({ gridCount, isTargetHit, setTimerRunning }: seaGridProps) {
 
     const [grid, setGrid] = useState<string[][]>(
         Array.from({ length: gridCount }, () => Array(gridCount).fill('navy'))
@@ -52,6 +25,7 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
 
         if (isTargetHit(cellName) === true) {
             newGrid[row][col] = 'yellow';
+            setTimerRunning(false);
         }
         else {
             newGrid[row][col] = 'gray';
@@ -69,7 +43,7 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
             }}>
                 {grid.map((row, rowIndex) =>
                     row.map((color, colIndex) => (
-                        <div
+                        <div className='cellStyle'
                             key={`${rowIndex}-${colIndex}`}
                             onClick={() => checkTheHit(rowIndex, colIndex)}
                             style={{

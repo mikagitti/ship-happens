@@ -1,6 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
+
+import { settingsBannerStyle, headingStyle, labelStyle, selectStyle, comboBoxGridStyle } from "./settings-banner-styles";
+
 import { comboBoxValues } from "../helpers/coordination";
-import { settingsBannerStyle, headingStyle, labelStyle, selectStyle, comboBoxGridStyle } from "./styles";
 
 type settingsBannerProps = {
     setGridCount: Dispatch<SetStateAction<number>>;
@@ -8,7 +10,6 @@ type settingsBannerProps = {
 }
 
 export default function SettingsBanner({ setGridCount, setShipLength }: settingsBannerProps) {
-
     const gridCount: number[] = comboBoxValues.gridCount;
     const shipLength: number[] = comboBoxValues.shipLength;
     const defaultGridCount: number = comboBoxValues.defaultGridCount;
