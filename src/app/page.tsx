@@ -1,10 +1,13 @@
 'use client';
-import { CSSProperties, useState } from "react";
-import { getShipOnMap } from "./helpers/coordination";
-import SeaGrid from "./components/sea-grid";
-import SettingsBanner from "./components/settings-banner";
+import { useState } from "react";
+
 import styles from './page.module.css';
-import { comboBoxValues } from "./helpers/coordination";
+
+import { comboBoxValues, getShipOnMap } from "./helpers/coordination";
+
+import SeaGrid from "./components/sea-grid";
+import SeaTimer from "./components/sea-timer";
+import SettingsBanner from "./components/settings-banner";
 
 
 export default function Home() {
@@ -15,9 +18,11 @@ export default function Home() {
   const [shipOnMap, setShipOnMap] = useState<string[] | null>(null);
   const [gridCount, setGridCount] = useState<number>(defaultGridCount);
   const [shipLength, setShipLength] = useState<number>(defaultShipLength);
+  const [timerRunning, setTimerRunning] = useState<boolean>(false);
 
   const isTargetHit = (coordinationXY: string): boolean => {
     if (shipOnMap && shipOnMap.includes(coordinationXY)) {
+      setTimerRunning(false);
       return true;
     }
     return false;
@@ -26,6 +31,7 @@ export default function Home() {
   const handleStartNewGameButtonClick = () => {
     const ship = getShipOnMap(gridCount, shipLength);
     setShipOnMap(ship);
+    setTimerRunning(true);
   }
 
   const handleNewGameButtonClick = () => {
@@ -44,13 +50,20 @@ export default function Home() {
             <button className={styles.buttonStyle} onClick={handleNewGameButtonClick}>New Game</button>
           </div>
 
+          <div className={styles.timerArea}>
+            <SeaTimer toggleStartStop={timerRunning} />
+          </div>
+
           <div className={styles.gridBottom}>
-            <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} isTargetHit={isTargetHit} />
+            <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} isTargetHit={isTargetHit} setTimerRunning={setTimerRunning} />
           </div>
         </> :
         <>
           <div className={styles.gridTop}>
             <SettingsBanner setGridCount={setGridCount} setShipLength={setShipLength} />
+          </div>
+          <div className={styles.timerArea}>
+            <p></p>
           </div>
 
           <div className={styles.gridBottom}>

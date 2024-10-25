@@ -1,0 +1,35 @@
+/*
+.cellStyle {
+     display: "flex";
+     justify-content: "center";
+     align-items: "center";
+     height: "100%";
+     width: "100%";
+     background-color: "navy";
+     color: "red";
+     border: "1px solid darkblue";
+     cursor: "pointer";
+     font-size: 2rem;
+}
+*/
+.cellStyle {
+     font-size: 2rem;
+}
+
+@media (max-width: 900px) {
+     .cellStyle {
+          font-size: 1.5rem;
+     }
+}
+
+@media (max-width: 600px) {
+     .cellStyle {
+          font-size: 1rem;
+     }
+}
+
+@media (max-width: 400px) {
+     .cellStyle {
+          font-size: 0.75rem;
+     }
+}
