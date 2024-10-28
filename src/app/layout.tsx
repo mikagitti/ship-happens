@@ -1,20 +1,21 @@
-import type { Metadata } from "next";
+'use client';
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: "Sink or Swim",
-  description: "You either sink or you swim.",
-};
+import { Provider } from 'react-redux'
+import { store } from '../store/store'
+import { ReactNode } from "react";
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+interface RootLayoutProps {
+  children: ReactNode
+}
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>
-        {children}
+        <Provider store={store}>
+          {children}
+        </Provider>
       </body>
     </html>
   );

@@ -9,8 +9,15 @@ import SeaGrid from "./components/sea-grid";
 import SeaTimer from "./components/sea-timer";
 import SettingsBanner from "./components/settings-banner";
 
+import { setGameIsRunning, resetClickCount } from "@/store/gameStatusSlice";
+import { useAppSelector } from '../store/store'
+import { useDispatch } from "react-redux";
 
 export default function Home() {
+
+  const dispatch = useDispatch();
+  const clickCount = useAppSelector((state) => state.gameStatus.clickCount);
+  const gameIsRunning = useAppSelector((state) => state.gameStatus.gameIsRunning);
 
   const defaultGridCount: number = comboBoxValues.defaultGridCount;
   const defaultShipLength: number = comboBoxValues.defaultShipLength;
@@ -18,20 +25,19 @@ export default function Home() {
   const [shipOnMap, setShipOnMap] = useState<string[] | null>(null);
   const [gridCount, setGridCount] = useState<number>(defaultGridCount);
   const [shipLength, setShipLength] = useState<number>(defaultShipLength);
-  const [timerRunning, setTimerRunning] = useState<boolean>(false);
 
   const isTargetHit = (coordinationXY: string): boolean => {
     if (shipOnMap && shipOnMap.includes(coordinationXY)) {
-      setTimerRunning(false);
       return true;
     }
     return false;
   }
 
-  const handleStartNewGameButtonClick = () => {
+  const handlePlayGameButtonClick = () => {
     const ship = getShipOnMap(gridCount, shipLength);
     setShipOnMap(ship);
-    setTimerRunning(true);
+    dispatch(resetClickCount());
+    dispatch(setGameIsRunning(true));
   }
 
   const handleNewGameButtonClick = () => {
@@ -40,34 +46,42 @@ export default function Home() {
     setShipLength(defaultShipLength);
   }
 
-
   return (
     <div className={styles.gridcontainer}>
       {shipOnMap ?
         <>
+          {/** TOP */}
           <div className={styles.gridTop}>
             <h1>Ship Happens</h1>
             <button className={styles.buttonStyle} onClick={handleNewGameButtonClick}>New Game</button>
+            <h3>Click counter: {clickCount}</h3>
+            <h3>Game is running: {gameIsRunning ? 'ON' : 'OFF'}</h3>
           </div>
 
+          {/** TIMER */}
           <div className={styles.timerArea}>
-            <SeaTimer toggleStartStop={timerRunning} />
+            <SeaTimer />
           </div>
 
+          {/** PLAY AREA */}
           <div className={styles.gridBottom}>
-            <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} isTargetHit={isTargetHit} setTimerRunning={setTimerRunning} />
+            <SeaGrid key={shipOnMap.join(',')} gridCount={gridCount} isTargetHit={isTargetHit} />
           </div>
         </> :
         <>
+          {/** TOP */}
           <div className={styles.gridTop}>
             <SettingsBanner setGridCount={setGridCount} setShipLength={setShipLength} />
           </div>
+
+          {/** TIMER */}
           <div className={styles.timerArea}>
             <p></p>
           </div>
 
+          {/** PLAY AREA */}
           <div className={styles.gridBottom}>
-            <button className={styles.buttonStyle} onClick={handleStartNewGameButtonClick}>PLAY!!</button>
+            <button className={styles.buttonStyle} onClick={handlePlayGameButtonClick}>PLAY!!</button>
           </div>
         </>
       }

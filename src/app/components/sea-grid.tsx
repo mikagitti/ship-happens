@@ -1,17 +1,22 @@
 
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { createCellName } from '../helpers/coordination';
 import { cellStyle, gridStyle, seaGridStyle } from './sea-grid-styles';
 import './sea-grid-styles.css';
 
+import { incrementClickCount, setGameIsRunning } from '../../store/gameStatusSlice';
+import { useAppSelector } from '@/store/store';
+import { useDispatch } from 'react-redux';
 
 type seaGridProps = {
     gridCount: number;
     isTargetHit: (coord: string) => boolean;
-    setTimerRunning: Dispatch<SetStateAction<boolean>>;
 }
 
-export default function SeaGrid({ gridCount, isTargetHit, setTimerRunning }: seaGridProps) {
+export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
+
+    const dispatch = useDispatch();
+    const isGameRunning = useAppSelector((state) => state.gameStatus.gameIsRunning);
 
     const [grid, setGrid] = useState<string[][]>(
         Array.from({ length: gridCount }, () => Array(gridCount).fill('navy'))
@@ -23,14 +28,21 @@ export default function SeaGrid({ gridCount, isTargetHit, setTimerRunning }: sea
 
         const cellName = createCellName(row + 1, col + 1); // +1 because the array index starts from 0.
 
+        /**Game is over: Stop reacting mouse click on cells*/
+        if (isGameRunning === false) {
+            return;
+        }
+
         if (isTargetHit(cellName) === true) {
             newGrid[row][col] = 'yellow';
-            setTimerRunning(false);
+            dispatch(setGameIsRunning(false));
         }
         else {
             newGrid[row][col] = 'gray';
         }
         setGrid(newGrid);
+
+        dispatch(incrementClickCount());
     };
 
     return (

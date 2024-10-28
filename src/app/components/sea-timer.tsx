@@ -1,8 +1,6 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-
-type timerProps = {
-    toggleStartStop: boolean;
-};
+import { useAppSelector } from "@/store/store";
+import { useEffect, useState } from "react";
+import { updateTimer } from "../helpers/timer";
 
 const timerStyle = {
     display: 'flex',
@@ -12,29 +10,21 @@ const timerStyle = {
     fontSize: '0.6rem',
 };
 
-export default function SeaTimer({ toggleStartStop = false }: timerProps) {
+export default function SeaTimer() {
+
+    const gameIsRunning = useAppSelector((state) => state.gameStatus.gameIsRunning);
 
     const [timer, setTimer] = useState<number>(0);
 
     useEffect(() => {
-        return updateTimer(toggleStartStop, setTimer);
-    }, [toggleStartStop]);
+        return updateTimer({ toggleStartStop: gameIsRunning, setTimer: setTimer });
+    }, [gameIsRunning]);
 
     return (
         <div style={timerStyle}>
-            <h1 style={{ backgroundColor: toggleStartStop ? 'lightblue' : 'red' }} >Time used: {timer}s</h1>
+            <h1 style={{ backgroundColor: gameIsRunning ? 'lightblue' : 'red' }}>{gameIsRunning ? `Time used` : `Time stop in `}: {timer}s</h1>
         </div>
     );
 }
 
-function updateTimer(toggleStartStop: boolean, setTimer: Dispatch<SetStateAction<number>>) {
-    let interval: NodeJS.Timeout | undefined = undefined;
-    if (toggleStartStop) {
-        interval = setInterval(() => {
-            setTimer(prevTimer => prevTimer + 1);
-        }, 1000);
-    } else if (!toggleStartStop) {
-        clearInterval(interval);
-    }
-    return () => clearInterval(interval);
-}
+
