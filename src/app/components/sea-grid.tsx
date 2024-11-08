@@ -1,12 +1,12 @@
 
 import { useState } from 'react';
-import { createCellName } from '../helpers/coordination';
-import { cellStyle, gridStyle, seaGridStyle } from './sea-grid-styles';
 import './sea-grid-styles.css';
 
-import { incrementClickCount, setGameIsRunning } from '../../store/gameStatusSlice';
-import { useAppSelector } from '@/store/store';
 import { useDispatch } from 'react-redux';
+import { useAppSelector } from '@/store/store';
+import { incrementClickCount, setGameIsRunning } from '../../store/gameStatusSlice';
+
+import { createCellName } from '../helpers/coordination';
 
 type seaGridProps = {
     gridCount: number;
@@ -17,6 +17,7 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
 
     const dispatch = useDispatch();
     const isGameRunning = useAppSelector((state) => state.gameStatus.gameIsRunning);
+
 
     const [grid, setGrid] = useState<string[][]>(
         Array.from({ length: gridCount }, () => Array(gridCount).fill('navy'))
@@ -35,40 +36,53 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
 
         if (isTargetHit(cellName) === true) {
             newGrid[row][col] = 'yellow';
+            markAllHits();
             dispatch(setGameIsRunning(false));
         }
         else {
-            newGrid[row][col] = 'gray';
+            newGrid[row][col] = 'rgb(65, 91, 221)';
         }
         setGrid(newGrid);
 
         dispatch(incrementClickCount());
     };
 
-    return (
-        <div style={seaGridStyle}>
+    const markAllHits = () => {
+        const newGrid = grid.map((row, rowIndex) =>
+            row.map((cell, colIndex) => {
+                const cellName = createCellName(rowIndex + 1, colIndex + 1);
+                console.log(cellName);
+                return isTargetHit(cellName) ? 'yellow' : cell;
+            })
+        );
+        console.log(newGrid);
+        setGrid(newGrid);
+    };
 
-            <div style={{
-                ...gridStyle,
-                gridTemplateColumns: `repeat(${gridCount}, 1fr)`,
-                gridTemplateRows: `repeat(${gridCount}, 1fr)`,
-            }}>
+    return (
+
+        <div className='seaGridSpace'>
+            <div className='container'
+                style={{
+                    gridTemplateColumns: `repeat(${gridCount}, 1fr)`,
+                }}>
                 {grid.map((row, rowIndex) =>
-                    row.map((color, colIndex) => (
+                    row.map((backgroundColor, colIndex) => (
                         <div className='cellStyle'
                             key={`${rowIndex}-${colIndex}`}
                             onClick={() => checkTheHit(rowIndex, colIndex)}
                             style={{
-                                ...cellStyle,
-                                backgroundColor: color,
+                                backgroundColor: backgroundColor,
                             }}
                         >
                             {createCellName(rowIndex + 1, colIndex + 1)}
+
                         </div>
+
                     ))
                 )}
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -38,6 +38,9 @@ export default function Home() {
     setShipOnMap(ship);
     dispatch(resetClickCount());
     dispatch(setGameIsRunning(true));
+
+    console.log(ship);
+
   }
 
   const handleNewGameButtonClick = () => {
@@ -80,9 +83,11 @@ export default function Home() {
           </div>
 
           {/** PLAY AREA */}
-          <div className={styles.gridBottom}>
+
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <button className={styles.buttonStyle} onClick={handlePlayGameButtonClick}>PLAY!!</button>
           </div>
+
         </>
       }
     </div>

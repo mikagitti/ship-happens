@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
-import { settingsBannerStyle, headingStyle, labelStyle, selectStyle, comboBoxGridStyle } from "./settings-banner-styles";
+import { settingsBannerStyle, HeadingStyle, labelStyle, selectStyle, comboBoxGridStyle } from "./settings-banner-styles";
 
 import { comboBoxValues } from "../helpers/coordination";
 
@@ -17,26 +17,41 @@ export default function SettingsBanner({ setGridCount, setShipLength }: settings
 
     return (
         <div style={settingsBannerStyle}>
-            <h1 style={headingStyle}>Settings</h1>
+            <HeadingStyle>Settings</HeadingStyle>
 
-            <div style={comboBoxGridStyle}>
-                <label style={labelStyle} htmlFor="gridCount">Grid Count:</label>
-                <select style={selectStyle} id="gridCount" name="gridCount" defaultValue={defaultGridCount} onChange={(e) => setGridCount(Number(e.target.value))}>
-                    {(gridCount ?? []).map((value: number) => (
-                        <option key={value} value={value}>{value}x{value}</option>
-                    ))}
-                </select>
-            </div>
+            <CompoboxComponent info={'Sea grid size'} values={gridCount} defaultValue={defaultGridCount} onChange={setGridCount} squareText={true} />
+            <CompoboxComponent info={'Ship length'} values={shipLength} defaultValue={defaultShipLength} onChange={setShipLength} />
 
-            <div style={comboBoxGridStyle}>
-                <label style={labelStyle} htmlFor="shipLength">Ship Length:</label>
-                <select style={selectStyle} id="shipLength" name="shipLength" defaultValue={defaultShipLength} onChange={(e) => setShipLength(Number(e.target.value))}>
-                    {(shipLength ?? []).map((value: number) => (
-                        <option key={value} value={value}>{value}</option>
-                    ))}
-                </select>
-            </div>
+        </div>
+    );
+}
 
+
+type ComboBoxComponentProps = {
+    info: string;
+    values: number[];
+    defaultValue: number;
+    onChange: Dispatch<SetStateAction<number>>;
+    squareText?: boolean;
+};
+
+const CompoboxComponent = ({ info, values, defaultValue, onChange, squareText = false }: ComboBoxComponentProps) => {
+
+    const [count, setCount] = useState<number>(defaultValue);
+
+    useEffect(() => {
+        onChange(count);
+    }, [count]);
+
+    return (
+        <div style={comboBoxGridStyle}>
+            <label style={labelStyle}>{info}:</label>
+            <select style={selectStyle} defaultValue={defaultValue} onChange={(e) => setCount(Number(e.target.value))}>
+                {(values ?? []).map((value: number) => (
+                    <option key={value} value={value}>{value}</option>
+                ))}
+            </select>
+            <label style={labelStyle}>{squareText ? `${count}x${count}` : 'grids'} </label>
         </div>
     );
 }
