@@ -1,24 +1,31 @@
-/*
-.cellStyle {
-     display: "flex";
-     justify-content: "center";
-     align-items: "center";
-     height: "100%";
-     width: "100%";
-     background-color: "navy";
-     color: "red";
-     border: "1px solid darkblue";
-     cursor: "pointer";
-     font-size: 2rem;
-}
-*/
-.cellStyle {
-     font-size: 2rem;
+.seaGridSpace {
+     margin: 10px;
+     display: flex;
+     justify-content: center;
+     align-items: center;
 }
 
-@media (max-width: 900px) {
-     .cellStyle {
-          font-size: 1.5rem;
+.container {
+     flex: 1;
+     display: grid;
+}
+
+.cellStyle {
+     aspect-ratio: 1 / 1;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+
+     background-color: navy;
+     color: red;
+     font-size: 1.5rem;
+
+     border: 2px solid darkblue;
+}
+
+@media (min-width: 1000px) {
+     .container {
+          max-width: 1000px;
      }
 }
 
