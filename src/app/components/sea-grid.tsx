@@ -18,7 +18,6 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
     const dispatch = useDispatch();
     const isGameRunning = useAppSelector((state) => state.gameStatus.gameIsRunning);
 
-
     const [grid, setGrid] = useState<string[][]>(
         Array.from({ length: gridCount }, () => Array(gridCount).fill('navy'))
     );
@@ -26,18 +25,13 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
     const checkTheHit = (row: number, col: number) => {
         //const newGrid = [...grid]; // Shallow copy. This copyis only one level deep. If the original array contains objects, only references to those objects are copied.
         const newGrid = grid.map(row => [...row]); // Deep copy. This copy is two levels deep. If the original array contains objects, the objects are also copied.
-
         const cellName = createCellName(row + 1, col + 1); // +1 because the array index starts from 0.
-
-        /**Game is over: Stop reacting mouse click on cells*/
-        if (isGameRunning === false) {
-            return;
-        }
 
         if (isTargetHit(cellName) === true) {
             newGrid[row][col] = 'yellow';
-            markAllHits();
+            showAllShips();
             dispatch(setGameIsRunning(false));
+            return;
         }
         else {
             newGrid[row][col] = 'rgb(65, 91, 221)';
@@ -47,15 +41,13 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
         dispatch(incrementClickCount());
     };
 
-    const markAllHits = () => {
+    const showAllShips = () => {
         const newGrid = grid.map((row, rowIndex) =>
             row.map((cell, colIndex) => {
                 const cellName = createCellName(rowIndex + 1, colIndex + 1);
-                console.log(cellName);
                 return isTargetHit(cellName) ? 'yellow' : cell;
             })
         );
-        console.log(newGrid);
         setGrid(newGrid);
     };
 
@@ -70,7 +62,7 @@ export default function SeaGrid({ gridCount, isTargetHit }: seaGridProps) {
                     row.map((backgroundColor, colIndex) => (
                         <div className='cellStyle'
                             key={`${rowIndex}-${colIndex}`}
-                            onClick={() => checkTheHit(rowIndex, colIndex)}
+                            onClick={() => isGameRunning ? checkTheHit(rowIndex, colIndex) : null} // If the game is not running, do not allow the user to click.
                             style={{
                                 backgroundColor: backgroundColor,
                             }}
